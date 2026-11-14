@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KORI Scorecard</title>
+<meta name="description" content="নিজেকে গড়া আর সমাজ গড়া: দুই ইনিংসে তোমার জীবনের স্কোর দেখো, কার্ড শেয়ার করো।">
+<meta property="og:title" content="তোমার জীবনের স্কোর কত? | KORI Scorecard">
+<meta property="og:description" content="দুই ইনিংস, ৩০টি বল। ২ মিনিটে তোমার স্কোর দেখো, বন্ধুদের চ্যালেঞ্জ করো।">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+@font-face{font-family:"Kalpurush";src:url("kalpurush.ttf") format("truetype");font-display:swap}
+/* VOICE: proud match-day energy; a low score is a start, never a failure
+   IDEA: a cricket scoreboard while you play, the printed scorecard you keep
+   PICTURE: live scoreboard on top of each innings; the share card at the end
+   COLOUR and TYPE: Bangladesh green field, red ball accent, chalk white; Kalpurush for everything, Hind Siliguri as fallback
+   LAYOUT: one phone-width column, sticky scoreboard during innings, big thumb buttons */
+:root{color-scheme:light dark;
+--bg:light-dark(#f4f1e8,#0b1511);--card:light-dark(#fff,#13221c);--ink:light-dark(#10231b,#eef3ee);
+--mute:light-dark(#56665e,#a3b5ab);--line:light-dark(#dcd8cb,#26392f);
+--g:#006a4e;--g2:#00513b;--r:#e8263a;--chalk:#f7f5ee;--gold:#f4b400}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Kalpurush","Hind Siliguri",system-ui,sans-serif;overflow-x:clip;-webkit-tap-highlight-color:transparent}
+.num{font-family:"Kalpurush","Hind Siliguri",sans-serif;font-variant-numeric:tabular-nums}
+.wrap{max-width:560px;margin:0 auto;padding:0 16px 56px}
+.top{display:flex;justify-content:space-between;align-items:center;padding:14px 0}
+.logo{font:800 26px/1 "Kalpurush","Hind Siliguri",sans-serif;letter-spacing:.02em;color:var(--g)}
+:root:not([data-theme=light]) .logo{color:light-dark(var(--g),#3ddc97)}
+.logo small{font:500 13px "Kalpurush","Hind Siliguri";color:var(--mute);margin-left:8px;letter-spacing:0}
+button,select,input{font:inherit;color:inherit}
+.ghost{background:none;border:1.5px solid var(--line);border-radius:999px;padding:8px 16px;min-height:44px;cursor:pointer}
+.btn{display:block;width:100%;min-height:56px;border:0;border-radius:16px;background:var(--r);color:#fff;font-weight:700;font-size:18px;cursor:pointer;box-shadow:0 6px 0 #a3141f;transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #a3141f}
+.btn.alt{background:var(--g);box-shadow:0 6px 0 #003b2b}
+.btn.alt:active{box-shadow:0 2px 0 #003b2b}
+.btn.sm{min-height:48px;font-size:16px;box-shadow:none;border-radius:12px}
+.btn.line{background:none;color:var(--ink);border:1.5px solid var(--line);box-shadow:none}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.scr{display:none}.scr.on{display:block;animation:in .25s ease-out}
+@keyframes in{from{opacity:0;transform:translateY(8px)}}
+h1{font:800 clamp(32px,9vw,46px)/1.08 "Kalpurush","Hind Siliguri",sans-serif;margin:8px 0 12px;text-wrap:balance}
+h2{font:800 28px/1.15 "Kalpurush","Hind Siliguri",sans-serif;margin:8px 0 8px}
+p{margin:0 0 14px}.mute{color:var(--mute)}.tiny{font-size:13px;color:var(--mute)}
+/* hero scoreboard */
+.board{background:var(--g);color:#fff;border-radius:22px;padding:20px 20px 18px;position:relative;overflow:hidden;box-shadow:0 14px 30px -14px #00513b99}
+.board:before{content:"";position:absolute;inset:auto -40px -120px auto;width:260px;height:260px;border-radius:50%;border:2px solid #ffffff22;box-shadow:0 0 0 40px #ffffff0c}
+.ball{position:absolute;right:18px;top:16px;width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ff6b78,var(--r) 55%,#9e0f1c);box-shadow:inset -4px -6px 10px #0004}
+.ball:after{content:"";position:absolute;inset:6px 18px;border-left:2px dashed #fff9;border-right:2px dashed #fff9;border-radius:50%}
+.blabel{font-size:14px;opacity:.85}
+.big{font:800 clamp(72px,24vw,112px)/.95 "Kalpurush","Hind Siliguri",sans-serif;display:flex;align-items:flex-start;gap:2px}
+.big sup{font-size:.45em;color:var(--gold);line-height:1;margin-top:.12em}
+.pill{display:inline-block;background:#fff;color:var(--g2);font-weight:700;border-radius:999px;padding:4px 14px;font-size:15px}
+.bars{display:grid;gap:10px;margin-top:16px}
+.bar{display:grid;gap:4px;font-size:14px}.bar div{display:flex;justify-content:space-between;gap:8px}
+.track{height:10px;border-radius:9px;background:#ffffff26;overflow:hidden}.track i{display:block;height:100%;border-radius:9px;background:#fff;transition:width .35s}
+.track.t i{background:#ff8a96}
+.stats{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;font-size:14px}
+.stats b{font:800 18px "Kalpurush","Hind Siliguri"}
+.how{display:grid;gap:8px;margin:20px 0}
+.how div{display:flex;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 14px}
+.rn{flex:none;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font:800 18px/1 "Kalpurush","Hind Siliguri";color:#fff}
+.r2{background:#6c7d75}.r4{background:var(--g)}.r6{background:var(--r)}
+.friend{background:var(--gold);color:#1c1400;border-radius:14px;padding:12px 16px;font-weight:700;margin:4px 0 14px}
+/* form */
+.field{margin:0 0 16px}.field>label,.lab{display:block;font-weight:600;margin-bottom:6px}
+input[type=text],select{width:100%;min-height:50px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);padding:10px 14px;font-size:16px}
+.seg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.seg button,.chip{min-height:46px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);cursor:pointer;font-weight:600}
+.seg button.on,.chip.on{border-color:var(--g);background:var(--g);color:#fff}
+.photo{display:flex;align-items:center;gap:12px}
+.photo img{width:56px;height:56px;border-radius:50%;object-fit:cover;display:none}
+.photo label{cursor:pointer}
+/* innings */
+.sticky{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0 12px}
+.sb{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;background:var(--g);color:#fff;border-radius:18px;padding:12px 16px}
+.sb .runs{font:800 54px/1 "Kalpurush","Hind Siliguri"}
+.sb .meta{font-size:14px;line-height:1.35}.sb .meta b{font-size:16px}
+.sb .tot{text-align:right;font-size:13px;opacity:.9}.sb .tot b{display:block;font:800 26px/1.1 "Kalpurush","Hind Siliguri"}
+.list{display:grid;gap:10px;margin:6px 0 20px}
+.it{display:flex;align-items:center;gap:12px;text-align:left;width:100%;min-height:64px;padding:10px 14px;border-radius:16px;border:1.5px solid var(--line);background:var(--card);cursor:pointer;position:relative;transition:border-color .15s,background .15s}
+.it .tx{flex:1;font-size:16px;line-height:1.35}
+.it .ck{flex:none;width:28px;height:28px;border-radius:8px;border:2px solid var(--line);display:grid;place-items:center}
+.it.on{border-color:var(--g);background:light-dark(#e7f3ee,#173328)}
+.it.on .ck{background:var(--g);border-color:var(--g)}
+.it.on .ck:after{content:"";width:8px;height:14px;border:solid #fff;border-width:0 3px 3px 0;transform:rotate(45deg) translate(-1px,-2px)}
+.pop{position:fixed;z-index:20;pointer-events:none;font:800 30px "Kalpurush","Hind Siliguri";color:var(--r);animation:pop .8s ease-out forwards;white-space:nowrap}
+.pop.r6{color:var(--r);font-size:40px;background:none}.pop.r4{color:var(--g)}.pop.r2{color:var(--mute);background:none}
+@keyframes pop{0%{opacity:0;transform:translate(-50%,0) scale(.6)}20%{opacity:1;transform:translate(-50%,-14px) scale(1.15)}100%{opacity:0;transform:translate(-50%,-70px) scale(1)}}
+/* result */
+.cardimg{width:100%;border-radius:18px;display:block;box-shadow:0 18px 40px -18px #0008;background:var(--card)}
+.cardimg.sq{aspect-ratio:1}.cardimg.st{aspect-ratio:9/16;max-height:72vh;width:auto;margin:0 auto}
+.row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1 1 140px}
+.themes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.sw{min-height:56px;border-radius:12px;border:2.5px solid transparent;cursor:pointer;font-size:12px;font-weight:700;display:grid;place-items:end center;padding-bottom:4px}
+.sw.on{border-color:var(--gold)}
+.checks{display:flex;gap:16px;flex-wrap:wrap;margin:12px 0}
+.checks label{display:flex;align-items:center;gap:8px;min-height:44px;cursor:pointer}
+.checks input{width:22px;height:22px;accent-color:var(--g)}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin:16px 0}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:8px 12px;text-align:left;font-weight:500;font-size:15px;line-height:1.3}
+.toast{visibility:hidden;position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(120px);background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:12px;font-weight:600;transition:transform .25s;z-index:30;max-width:90vw}
+.toast.on{visibility:visible;transform:translateX(-50%) translateY(0)}
+.foot{margin-top:28px;text-align:center}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><div class="logo">KORI<small data-t="cardSub">জীবনের স্কোরকার্ড</small></div><button class="ghost" id="langBtn">English</button></div>
+
+  <!-- HOME -->
+  <section class="scr on" id="home">
+    <div id="friend" class="friend" hidden></div>
+    <h1 data-t="h1">তোমার জীবনের স্কোর কত?</h1>
+    <p class="mute" data-t="lead">দুই ইনিংস, ৩০টি বল। নিজেকে গড়া আর সমাজ গড়ায় তুমি কত রান করেছ, ২ মিনিটে দেখে নাও।</p>
+    <p class="tiny" style="margin:4px 0 8px;text-align:center" data-t="sample">উদাহরণ: রাকিবের কার্ড</p>
+    <img id="demoImg" class="cardimg st" alt="sample KORI scorecard">
+    <div class="how">
+      <div><span class="rn r2 num" data-n="2">২</span><span data-t="how1">রান: যা অনেকেই করেছে</span></div>
+      <div><span class="rn r4 num" data-n="4">৪</span><span data-t="how2">চার: যা কেউ কেউ করেছে</span></div>
+      <div><span class="rn r6 num" data-n="6">৬</span><span data-t="how3">ছক্কা: যা খুব কম মানুষ করেছে</span></div>
+    </div>
+    <button class="btn" id="startBtn" data-t="start">ব্যাটিং শুরু করো</button>
+    <p class="tiny" style="text-align:center;margin-top:12px" data-t="priv">কোনো সাইন-আপ নেই। তোমার উত্তর শুধু তোমার ফোনেই থাকে।</p>
+  </section>
+
+  <!-- SETUP -->
+  <section class="scr" id="setup">
+    <h2 data-t="setupH">মাঠে নামার আগে</h2>
+    <div class="field"><label for="nm" data-t="name">তোমার নাম (ঐচ্ছিক)</label><input id="nm" type="text" maxlength="24" autocomplete="given-name"></div>
+    <div class="field"><span class="lab" data-t="age">বয়স</span><div class="seg" id="age"><button data-v="13-17" class="num">১৩–১৭</button><button data-v="18-24" class="num">১৮–২৪</button><button data-v="25+" class="num">২৫+</button></div></div>
+    <div class="field"><label for="dist" data-t="district">জেলা</label><select id="dist"></select></div>
+    <div class="field"><span class="lab" data-t="photo">ছবি (ঐচ্ছিক)</span>
+      <div class="photo"><img id="ph" alt=""><label class="ghost" for="phIn" data-t="addPhoto">ছবি যোগ করো</label><input id="phIn" type="file" accept="image/*" hidden><button class="ghost" id="phX" hidden data-t="remove">সরাও</button></div></div>
+    <button class="btn alt" id="goBtn" data-t="go">মাঠে নামো</button>
+  </section>
+
+  <!-- INNINGS -->
+  <section class="scr" id="inn">
+    <div class="sticky"><div class="sb">
+      <div class="runs num" id="sbRuns">০</div>
+      <div class="meta"><b id="sbName">১ম ইনিংস</b><br><span id="sbPillar">নিজেকে গড়া</span><br><span class="num" id="sbFS"></span></div>
+      <div class="tot"><span data-t="total">মোট</span><b class="num" id="sbTot">০</b></div>
+    </div></div>
+    <p class="mute" data-t="tapHint">যা যা করেছ, সেগুলোতে ট্যাপ করো</p>
+    <div class="list" id="list"></div>
+    <button class="btn alt" id="endInn" data-t="endInn">ইনিংস শেষ</button>
+  </section>
+
+  <!-- BREAK -->
+  <section class="scr" id="brk">
+    <div class="board" style="margin-top:12px"><span class="ball"></span>
+      <div class="blabel" data-t="brk">ইনিংস বিরতি</div>
+      <div class="big num" id="brkRuns">০</div>
+      <div data-t="brk1">১ম ইনিংস · নিজেকে গড়া</div>
+    </div>
+    <p style="margin:18px 0" data-t="brkMsg">দারুণ শুরু! এবার দেখা যাক সমাজের জন্য তোমার ইনিংস কেমন।</p>
+    <button class="btn" id="start2" data-t="start2">২য় ইনিংস শুরু করো</button>
+  </section>
+
+  <!-- RESULT -->
+  <section class="scr" id="res">
+    <h2 id="resH">তোমার স্কোরকার্ড</h2>
+    <p class="mute" id="resSub"></p>
+    <img id="cardImg" class="cardimg st" alt="KORI scorecard">
+    <p class="tiny" style="text-align:center;margin-top:8px" data-t="saveHint">ডাউনলোড না হলে ছবিটি চেপে ধরে সেভ করো।</p>
+    <div class="row" style="margin:14px 0"><button class="btn sm" id="saveBtn" data-t="save">ছবি সেভ করো</button><button class="btn sm alt" id="shareBtn" data-t="share">শেয়ার করো</button></div>
+    <div class="row"><button class="btn sm line" id="capBtn" data-t="copyCap">ক্যাপশন কপি</button><button class="btn sm line" id="linkBtn" data-t="copyLink">চ্যালেঞ্জ লিংক কপি</button></div>
+    <div class="panel">
+      <span class="lab" data-t="format">সাইজ</span>
+      <div class="seg" id="fmt" style="grid-template-columns:repeat(2,minmax(0,1fr))"><button data-v="story" data-t="story">স্টোরি</button><button data-v="square" data-t="square">স্কয়ার</button></div>
+      <span class="lab" style="margin-top:14px" data-t="theme">থিম</span>
+      <div class="themes" id="themes"></div>
+      <div class="checks">
+        <label><input type="checkbox" id="cName"><span data-t="showName">নাম</span></label>
+        <label><input type="checkbox" id="cPhoto"><span data-t="showPhoto">ছবি</span></label>
+        <label><input type="checkbox" id="cDist"><span data-t="showDist">জেলা</span></label>
+      </div>
+    </div>
+    <button class="btn" id="nextBtn" data-t="next">পরের ওভার: ৩টি টার্গেট বেছে নাও</button>
+    <div class="foot"><button class="ghost" id="againBtn" data-t="again">উত্তর বদলাও</button></div>
+  </section>
+
+  <!-- NEXT OVER -->
+  <section class="scr" id="nxt">
+    <h2 data-t="nextH">পরের ওভারের টার্গেট</h2>
+    <p class="mute" data-t="nextMsg">যা এখনো করোনি, তার মধ্য থেকে ৩টি বেছে নাও। ৩০ দিনে করে ফেলো, তারপর ফিরে এসে নতুন স্কোর শেয়ার করো।</p>
+    <div class="chips" id="chips"></div>
+    <div id="tgtWrap" hidden style="margin-top:18px">
+      <img id="tgtImg" class="cardimg sq" alt="KORI target card">
+      <div class="row" style="margin:14px 0"><button class="btn sm" id="tSave" data-t="save">ছবি সেভ করো</button><button class="btn sm alt" id="tShare" data-t="share">শেয়ার করো</button></div>
+    </div>
+    <div class="foot"><button class="ghost" id="backRes" data-t="back">স্কোরকার্ডে ফিরে যাও</button></div>
+  </section>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<canvas id="cv" hidden></canvas>
+
+<script>
+{
+// ---------- settings ----------
+const SITE = ""; // e.g. "kori.com.bd" once you have a domain; shown on the card and used in challenge links
+
+// ---------- data ----------
+const SH = {"m1": ["বই পড়েছি", "Read a book"], "m2": ["পরিবারের জন্য রান্না", "Cooked for family"], "m3": ["সোশ্যাল মিডিয়া ছাড়া ১ দিন", "A day off social media"], "m4": ["৫ কিমি হাঁটা বা সাইকেল", "Walked or cycled 5 km"], "m5": ["ইউটিউবে শিখে কাজে লাগানো", "Learned online, used it"], "m6": ["৭ দিন সূর্যোদয়ের আগে ওঠা", "7 days before sunrise"], "m7": ["৫ মিনিট ইংরেজিতে কথা", "5 minutes of English"], "m8": ["সাঁতার জানি", "I can swim"], "m9": ["৩০ দিনের ভালো অভ্যাস", "A 30-day good habit"], "m10": ["৫০+ মানুষের সামনে কথা", "Spoke to 50+ people"], "m11": ["অনলাইন কোর্স শেষ", "Finished a course"], "m12": ["নিজের দক্ষতায় প্রথম আয়", "First earnings"], "m13": ["প্রতিযোগিতায় পুরস্কার", "Won a competition"], "m14": ["আমার কাজ দেখেছে ১,০০০+", "Seen by 1,000+ people"], "m15": ["দল নিয়ে প্রজেক্ট শেষ", "Led a team project"], "t1": ["৩০ দিন ময়লা ডাস্টবিনে", "30 days, no littering"], "t2": ["৬ মাস প্রাণীকে কষ্ট দিইনি", "Kind to animals, 6 months"], "t3": ["বসার জায়গা ছেড়ে দেওয়া", "Gave up my seat"], "t4": ["৩০ দিন গুজব শেয়ার করিনি", "No rumours for 30 days"], "t5": ["দাদা-দাদি/নানা-নানিকে ফোন", "Called my grandparents"], "t6": ["বয়স্ককে স্মার্টফোন শেখানো", "Taught an elder a phone"], "t7": ["গাছ লাগিয়ে যত্ন", "Planted and raised a tree"], "t8": ["পরিচ্ছন্নতা অভিযান", "Joined a clean-up"], "t9": ["রক্তদান বা রক্ত জোগাড়", "Blood for a patient"], "t10": ["বুলিংয়ের বিরুদ্ধে পাশে", "Stood up to bullying"], "t11": ["বিনা পয়সায় পড়ানো", "Taught someone for free"], "t12": ["দুর্যোগে স্বেচ্ছাসেবা", "Disaster relief volunteer"], "t13": ["কমিউনিটি প্রজেক্ট", "Community project"], "t14": ["চাকরি/ভর্তিতে সাহায্য", "Helped with a job or admission"], "t15": ["চলমান উদ্যোগ শুরু", "Started an initiative"]};
+const ITEMS = [
+ [ // 1st innings: KORI Me
+  ["m1",2,"গত এক বছরে পাঠ্যবইয়ের বাইরে একটি পুরো বই পড়েছি","Read a full book outside the syllabus in the last year"],
+  ["m2",2,"পরিবারের জন্য এক বেলার পুরো রান্না করেছি","Cooked a full meal for my family"],
+  ["m3",2,"সোশ্যাল মিডিয়া ছাড়া পুরো একটি দিন কাটিয়েছি","Spent one full day without social media"],
+  ["m4",2,"একদিনে ৫ কিলোমিটার হেঁটেছি বা সাইকেল চালিয়েছি","Walked or cycled 5 km in one day"],
+  ["m5",2,"ইউটিউব থেকে নতুন কিছু শিখে সত্যিই কাজে লাগিয়েছি","Learned something on YouTube and actually used it"],
+  ["m6",4,"টানা ৭ দিন সূর্য ওঠার আগে উঠেছি","Woke before sunrise 7 days in a row"],
+  ["m7",4,"ইংরেজিতে টানা ৫ মিনিট কথা বলেছি","Held a 5-minute conversation in English"],
+  ["m8",4,"সাঁতার জানি","I can swim"],
+  ["m9",4,"কোনো ভালো অভ্যাস টানা ৩০ দিন ধরে রেখেছি","Kept a good habit for 30 days straight"],
+  ["m10",4,"৫০ জনের বেশি মানুষের সামনে কথা বলেছি","Spoke in front of 50+ people"],
+  ["m11",4,"একটি অনলাইন কোর্স পুরো শেষ করেছি","Finished a full online course"],
+  ["m12",6,"নিজের দক্ষতা দিয়ে প্রথম আয় করেছি","Earned my first money from my own skill"],
+  ["m13",6,"কোনো প্রতিযোগিতায় পুরস্কার পেয়েছি","Won a prize in a competition"],
+  ["m14",6,"আমার তৈরি কিছু ১,০০০+ মানুষ দেখেছে","Made something seen by 1,000+ people"],
+  ["m15",6,"একটি দলকে নেতৃত্ব দিয়ে প্রজেক্ট শেষ করেছি","Led a team to finish a project"]
+ ],
+ [ // 2nd innings: KORI Together
+  ["t1",2,"গত ৩০ দিন যেখানে-সেখানে না ফেলে ময়লা ডাস্টবিনে ফেলেছি","Used a bin and didn't litter for the last 30 days"],
+  ["t2",2,"গত ৬ মাসে কোনো প্রাণীকে কষ্ট দিইনি","Didn't hurt any animal in the last 6 months"],
+  ["t3",2,"বয়স্ক, অন্তঃসত্ত্বা বা প্রতিবন্ধী কাউকে বসার জায়গা ছেড়ে দিয়েছি","Gave my seat to an elder, a pregnant woman or a person with a disability"],
+  ["t4",2,"গত ৩০ দিন যাচাই না করে কোনো খবর শেয়ার করিনি","Didn't share any unverified news for the last 30 days"],
+  ["t5",2,"এই মাসে শুধু গল্প করতে দাদা-দাদি/নানা-নানি বা বয়স্ক আত্মীয়কে ফোন করেছি","Called a grandparent or elderly relative this month just to talk"],
+  ["t6",4,"বয়স্ক কাউকে নিরাপদে স্মার্টফোন ব্যবহার শিখিয়েছি","Taught an elder to use a smartphone safely"],
+  ["t7",4,"গাছ লাগিয়ে অন্তত ৩ মাস যত্ন নিয়েছি","Planted a tree and cared for it for 3+ months"],
+  ["t8",4,"কোনো পাবলিক জায়গা পরিষ্কারে অংশ নিয়েছি","Joined a clean-up of a public place"],
+  ["t9",4,"রক্ত দিয়েছি বা রোগীর জন্য রক্ত জোগাড় করে দিয়েছি","Donated blood or found a blood donor for a patient"],
+  ["t10",4,"বুলিং বা হয়রানির শিকার কারও পাশে দাঁড়িয়েছি","Stood up for someone being bullied or harassed"],
+  ["t11",4,"বিনা পয়সায় কাউকে পড়িয়েছি বা কোনো দক্ষতা শিখিয়েছি","Taught or tutored someone for free"],
+  ["t12",6,"বন্যা, শীত বা দুর্যোগে ত্রাণ কাজে স্বেচ্ছাসেবা দিয়েছি","Volunteered in flood, winter or disaster relief"],
+  ["t13",6,"দল নিয়ে একটি কমিউনিটি প্রজেক্ট আয়োজন করেছি","Organised a community project with a team"],
+  ["t14",6,"কাউকে চাকরি, ভর্তি বা বৃত্তি পেতে সাহায্য করেছি","Helped someone get a job, admission or scholarship"],
+  ["t15",6,"এমন একটি উদ্যোগ শুরু করেছি যা এখনো চলছে","Started an initiative that is still running"]
+ ]
+].map((inn,k)=>inn.map(([id,r,bn,en])=>({id,r,bn,en,k,sbn:SH[id][0],sen:SH[id][1]})));
+const BYID = Object.fromEntries(ITEMS.flat().map(i=>[i.id,i]));
+
+const DIST = [["Bagerhat","বাগেরহাট"],["Bandarban","বান্দরবান"],["Barguna","বরগুনা"],["Barishal","বরিশাল"],["Bhola","ভোলা"],["Bogura","বগুড়া"],["Brahmanbaria","ব্রাহ্মণবাড়িয়া"],["Chandpur","চাঁদপুর"],["Chapainawabganj","চাঁপাইনবাবগঞ্জ"],["Chattogram","চট্টগ্রাম"],["Chuadanga","চুয়াডাঙ্গা"],["Cox's Bazar","কক্সবাজার"],["Cumilla","কুমিল্লা"],["Dhaka","ঢাকা"],["Dinajpur","দিনাজপুর"],["Faridpur","ফরিদপুর"],["Feni","ফেনী"],["Gaibandha","গাইবান্ধা"],["Gazipur","গাজীপুর"],["Gopalganj","গোপালগঞ্জ"],["Habiganj","হবিগঞ্জ"],["Jamalpur","জামালপুর"],["Jashore","যশোর"],["Jhalokati","ঝালকাঠি"],["Jhenaidah","ঝিনাইদহ"],["Joypurhat","জয়পুরহাট"],["Khagrachhari","খাগড়াছড়ি"],["Khulna","খুলনা"],["Kishoreganj","কিশোরগঞ্জ"],["Kurigram","কুড়িগ্রাম"],["Kushtia","কুষ্টিয়া"],["Lakshmipur","লক্ষ্মীপুর"],["Lalmonirhat","লালমনিরহাট"],["Madaripur","মাদারীপুর"],["Magura","মাগুরা"],["Manikganj","মানিকগঞ্জ"],["Meherpur","মেহেরপুর"],["Moulvibazar","মৌলভীবাজার"],["Munshiganj","মুন্সিগঞ্জ"],["Mymensingh","ময়মনসিংহ"],["Naogaon","নওগাঁ"],["Narail","নড়াইল"],["Narayanganj","নারায়ণগঞ্জ"],["Narsingdi","নরসিংদী"],["Natore","নাটোর"],["Netrokona","নেত্রকোণা"],["Nilphamari","নীলফামারী"],["Noakhali","নোয়াখালী"],["Pabna","পাবনা"],["Panchagarh","পঞ্চগড়"],["Patuakhali","পটুয়াখালী"],["Pirojpur","পিরোজপুর"],["Rajbari","রাজবাড়ী"],["Rajshahi","রাজশাহী"],["Rangamati","রাঙ্গামাটি"],["Rangpur","রংপুর"],["Satkhira","সাতক্ষীরা"],["Shariatpur","শরীয়তপুর"],["Sherpur","শেরপুর"],["Sirajganj","সিরাজগঞ্জ"],["Sunamganj","সুনামগঞ্জ"],["Sylhet","সিলেট"],["Tangail","টাঙ্গাইল"],["Thakurgaon","ঠাকুরগাঁও"]];
+
+const TX = {
+ bn:{langBtn:"English",cardSub:"নিজেকে গড়া ও সমাজ গড়ার স্কোরকার্ড",h1:"তোমার জীবনের স্কোর কত?",lead:"৩০টি ভালো কাজ আর ভালো অভ্যাস, দুই ইনিংসে। যা যা করেছ টিক দাও: তোমার কার্ডে সবাই দেখবে তুমি কী কী করেছ, আর কোনগুলো তোমার পরের লক্ষ্য।",sample:"উদাহরণ: রাকিবের কার্ড। রঙিন ঘর = যা সে করেছে",legend:"রঙিন ঘর = যা করেছি  ·  ফাঁকা ঘর = পরের লক্ষ্য",best:"আমার সেরা শট",more:n=>`আরও ${n}টি`,none:"শুরু হলো এই তো",did:"যা করেছি",
+  how1:"রান: যা অনেকেই করেছে",how2:"চার: যা কেউ কেউ করেছে",how3:"ছক্কা: যা খুব কম মানুষ করেছে",start:"ব্যাটিং শুরু করো",priv:"কোনো সাইন-আপ নেই। তোমার উত্তর শুধু তোমার ফোনেই থাকে।",
+  friend:(n,s)=>`${n} ${s}* রান করেছে। তুমি পারবে?`,setupH:"মাঠে নামার আগে",name:"তোমার নাম (ঐচ্ছিক)",age:"বয়স",district:"জেলা",choose:"জেলা বেছে নাও (ঐচ্ছিক)",photo:"ছবি (ঐচ্ছিক)",addPhoto:"ছবি যোগ করো",remove:"সরাও",go:"মাঠে নামো",
+  inn:["১ম ইনিংস","২য় ইনিংস"],p1:"নিজেকে গড়া",p2:"সমাজ গড়া",total:"মোট",tapHint:"যা যা করেছ, সেগুলোতে ট্যাপ করো",endInn:"ইনিংস শেষ",brk:"ইনিংস বিরতি",brk1:"১ম ইনিংস · নিজেকে গড়া",
+  brkMsg:"দারুণ শুরু! এবার দেখা যাক সমাজের জন্য তোমার ইনিংস কেমন।",start2:"২য় ইনিংস শুরু করো",resH:"তোমার স্কোরকার্ড",saveHint:"ডাউনলোড না হলে ছবিটি চেপে ধরে সেভ করো।",save:"ছবি সেভ করো",share:"শেয়ার করো",
+  copyCap:"ক্যাপশন কপি",copyLink:"চ্যালেঞ্জ লিংক কপি",format:"সাইজ",story:"স্টোরি",square:"স্কয়ার",theme:"থিম",showName:"নাম",showPhoto:"ছবি",showDist:"জেলা",next:"পরের ওভার: ৩টি টার্গেট বেছে নাও",again:"উত্তর বদলাও",
+  nextH:"পরের ওভারের টার্গেট",nextMsg:"যা এখনো করোনি, তার মধ্য থেকে ৩টি বেছে নাও। ৩০ দিনে করে ফেলো, তারপর ফিরে এসে নতুন স্কোর শেয়ার করো।",back:"স্কোরকার্ডে ফিরে যাও",
+  copied:"কপি হয়েছে",noCopy:"কপি করা যায়নি",shareNo:"এখানে শেয়ার কাজ করছে না। ছবি সেভ করে পোস্ট করো।",max3:"৩টির বেশি বাছা যাবে না",
+  titles:["নতুন ব্যাটার","ইনিংস গড়ছি","হাফ-সেঞ্চুরিয়ান","সেঞ্চুরিয়ান"],t2:"হাফ-সেঞ্চুরিয়ান",allr:"অলরাউন্ডার",fours:"চার",sixes:"ছক্কা",q:"তোমার স্কোর কত?",going:"জীবনের ইনিংস চলছে",
+  prev:"আগে",now:"এখন",myNext:"আমার পরের ওভার",in30:"৩০ দিনের টার্গেট · তারপর নতুন স্কোর",now2:"এখনকার স্কোর",themesN:["টেস্ট","লাল-সবুজ","নাইট","মিনিমাল"],
+  how1n:"২",sub:(s,t)=>`${t} · মোট ${s}*`,
+  cap:(s,a,b,t,url,dd)=>`আমার জীবনের স্কোরকার্ড: ${s}* (${t})\nনিজেকে গড়া ${a} · সমাজ গড়া ${b}${dd?"\nযা করেছি: "+dd:""}\nতোমার স্কোর কত? দেখে নাও, তারপর আমাকে হারাও 🏏${url?"\n"+url:""}\n#KORIScorecard`},
+ en:{langBtn:"বাংলা",cardSub:"Growth & good-deeds scorecard",h1:"What's your life score?",lead:"30 good deeds and good habits, in two innings. Tick what you've done: your card shows everyone exactly what you did, and what's next for you.",sample:"Sample: Rakib's card. Coloured boxes = what he has done",legend:"Coloured = done  ·  Empty = next target",best:"My best shots",more:n=>`+${n} more`,none:"Innings just started",did:"What I've done",
+  how1:"runs: things many people have done",how2:"a four: things some people have done",how3:"a six: things few people have done",start:"Start batting",priv:"No sign-up. Your answers stay on your phone.",
+  friend:(n,s)=>`${n} scored ${s}*. Can you beat it?`,setupH:"Before you walk out",name:"Your name (optional)",age:"Age",district:"District",choose:"Choose district (optional)",photo:"Photo (optional)",addPhoto:"Add photo",remove:"Remove",go:"Walk out to bat",
+  inn:["1st innings","2nd innings"],p1:"Building myself",p2:"Building my community",total:"Total",tapHint:"Tap everything you've done",endInn:"End innings",brk:"Innings break",brk1:"1st innings · Building myself",
+  brkMsg:"Great start! Now let's see your innings for your community.",start2:"Start 2nd innings",resH:"Your scorecard",saveHint:"If it doesn't download, press and hold the image to save it.",save:"Save image",share:"Share",
+  copyCap:"Copy caption",copyLink:"Copy challenge link",format:"Size",story:"Story",square:"Square",theme:"Theme",showName:"Name",showPhoto:"Photo",showDist:"District",next:"Next over: pick 3 targets",again:"Change answers",
+  nextH:"Your next-over targets",nextMsg:"Pick 3 things you haven't done yet. Do them in 30 days, then come back and share your new score.",back:"Back to scorecard",
+  copied:"Copied",noCopy:"Couldn't copy",shareNo:"Sharing doesn't work here. Save the image and post it.",max3:"You can pick up to 3",
+  titles:["Fresh at the crease","Building the innings","Half-centurion","Centurion"],t2:"Half-centurion",allr:"All-rounder",fours:"Fours",sixes:"Sixes",q:"What's your score?",going:"Life's innings: still not out",
+  prev:"Before",now:"Now",myNext:"My next over",in30:"30-day targets · then a new score",now2:"Current score",themesN:["Test","Lal-Sobuj","Night","Minimal"],
+  sub:(s,t)=>`${t} · total ${s}*`,
+  cap:(s,a,b,t,url,dd)=>`My life scorecard: ${s}* (${t})\nBuilding myself ${a} · Building my community ${b}${dd?"\nWhat I've done: "+dd:""}\nWhat's your score? Take it, then beat me 🏏${url?"\n"+url:""}\n#KORIScorecard`}
+};
+
+const THEMES = [
+ {bg:"#f7f5ee",ink:"#10231b",mute:"#5b6b63",ring:"rgba(0,106,78,.09)",me:"#006a4e",tog:"#e8263a",meInk:"#ffffff",togInk:"#ffffff",track:"rgba(16,35,27,.10)",band:"#006a4e",bandInk:"#ffffff",pill:"#10231b",pillInk:"#f7f5ee",star:"#e8263a"},
+ {bg:"#006a4e",ink:"#ffffff",mute:"rgba(255,255,255,.78)",ring:"rgba(255,255,255,.08)",me:"#ffffff",tog:"#ff7d8a",meInk:"#00513b",togInk:"#4a0010",track:"rgba(255,255,255,.20)",band:"#e8263a",bandInk:"#ffffff",pill:"#ffffff",pillInk:"#00513b",star:"#f4b400"},
+ {bg:"#0b1420",ink:"#f2f5f7",mute:"#9fb0c0",ring:"rgba(255,255,255,.06)",me:"#3ddc97",tog:"#ff5a6e",meInk:"#0b1420",togInk:"#0b1420",track:"rgba(255,255,255,.12)",band:"#f4b400",bandInk:"#0b1420",pill:"#f4b400",pillInk:"#0b1420",star:"#f4b400",lights:true},
+ {bg:"#ffffff",ink:"#111111",mute:"#666666",ring:"rgba(0,0,0,.05)",me:"#111111",tog:"#e8263a",meInk:"#ffffff",togInk:"#ffffff",track:"#ececec",band:"#111111",bandInk:"#ffffff",pill:"#111111",pillInk:"#ffffff",star:"#e8263a"}
+];
+
+// ---------- state ----------
+const KEY="kori-scorecard-v1";
+let S={lang:"bn",name:"",age:"",dist:"",photo:"",done:[],inn:0,fmt:"story",theme:0,sName:true,sPhoto:true,sDist:true,targets:[],last:null};
+try{const v=JSON.parse(localStorage.getItem(KEY)||"null");if(v)S=Object.assign(S,v)}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const $=s=>document.querySelector(s);
+const t=k=>TX[S.lang][k];
+const BN="০১২৩৪৫৬৭৮৯";
+const D=n=>S.lang==="bn"?String(n).replace(/\d/g,d=>BN[d]):String(n);
+const distName=()=>{const d=DIST.find(x=>x[0]===S.dist);return d?(S.lang==="bn"?d[1]:d[0]):""};
+
+function score(){return scoreOf(S.done)}
+function scoreOf(done){let a=0,b=0,f=0,s=0;for(const id of done){const it=BYID[id];if(!it)continue;it.k?b+=it.r:a+=it.r;if(it.r===4)f++;if(it.r===6)s++}
+ const tot=a+b;return {a,b,tot,f,s,allr:a>=30&&b>=30,ti:tot>=100?3:tot>=50?2:tot>=30?1:0}}
+
+// ---------- language ----------
+function applyLang(){
+ document.documentElement.lang=S.lang;
+ document.querySelectorAll("[data-t]").forEach(e=>{const v=t(e.dataset.t);if(typeof v==="string")e.textContent=v});
+ $("#langBtn").textContent=t("langBtn");
+ document.querySelectorAll("[data-n]").forEach(e=>e.textContent=D(e.dataset.n));
+ drawDemo();
+ document.querySelectorAll("#age button").forEach(b=>b.textContent=D(b.dataset.v).replace("-","–"));
+ $("#dist").innerHTML=`<option value="">${t("choose")}</option>`+DIST.map(d=>`<option value="${d[0]}"${d[0]===S.dist?" selected":""}>${S.lang==="bn"?d[1]:d[0]}</option>`).join("");
+ friendBanner();
+}
+$("#langBtn").addEventListener("click",()=>{S.lang=S.lang==="bn"?"en":"bn";save();applyLang();const cur=document.querySelector(".scr.on").id;if(cur==="inn")renderInn();if(cur==="res")renderRes();if(cur==="nxt")renderNext();if(cur==="brk")$("#brkRuns").textContent=D(score().a)});
+
+function friendBanner(){
+ let n="",s="";try{const p=new URLSearchParams(location.search);n=(p.get("n")||"").slice(0,20);s=(p.get("s")||"").replace(/\D/g,"").slice(0,3)}catch(e){}
+ const el=$("#friend");if(n&&s){el.textContent=t("friend")(n,D(s));el.hidden=false}else el.hidden=true;
+}
+
+// ---------- navigation ----------
+function show(id){document.querySelectorAll(".scr").forEach(e=>e.classList.toggle("on",e.id===id));window.scrollTo(0,0)}
+
+// ---------- setup ----------
+$("#startBtn").addEventListener("click",()=>{$("#nm").value=S.name;markAge();setPhoto();show("setup")});
+function markAge(){document.querySelectorAll("#age button").forEach(b=>b.classList.toggle("on",b.dataset.v===S.age))}
+$("#age").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;S.age=b.dataset.v;if(S.age==="13-17")S.sPhoto=false;markAge();save()});
+$("#nm").addEventListener("input",e=>{S.name=e.target.value.trim();save()});
+$("#dist").addEventListener("change",e=>{S.dist=e.target.value;save()});
+function setPhoto(){const im=$("#ph");if(S.photo){im.src=S.photo;im.style.display="block";$("#phX").hidden=false}else{im.style.display="none";$("#phX").hidden=true}}
+$("#phIn").addEventListener("change",e=>{const f=e.target.files&&e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const img=new Image();img.onload=()=>{const c=document.createElement("canvas"),z=320,m=Math.min(img.width,img.height);c.width=c.height=z;c.getContext("2d").drawImage(img,(img.width-m)/2,(img.height-m)/2,m,m,0,0,z,z);S.photo=c.toDataURL("image/jpeg",.85);save();setPhoto()};img.src=r.result};r.readAsDataURL(f)});
+$("#phX").addEventListener("click",()=>{S.photo="";save();setPhoto()});
+$("#goBtn").addEventListener("click",()=>{S.inn=0;save();renderInn();show("inn")});
+
+// ---------- innings ----------
+function renderInn(){
+ const k=S.inn;
+ $("#list").innerHTML=ITEMS[k].map(it=>`<button class="it${S.done.includes(it.id)?" on":""}" data-id="${it.id}" aria-pressed="${S.done.includes(it.id)}"><span class="rn num r${it.r}">${D(it.r)}</span><span class="tx">${it[S.lang]}</span><span class="ck"></span></button>`).join("");
+ $("#sbName").textContent=t("inn")[k];$("#sbPillar").textContent=k?t("p2"):t("p1");
+ $("#endInn").textContent=t("endInn");updBoard();
+}
+function updBoard(){const s=score();$("#sbRuns").textContent=D(S.inn?s.b:s.a);$("#sbTot").textContent=D(s.tot)+"*";$("#sbFS").textContent=`${t("fours")} ${D(s.f)} · ${t("sixes")} ${D(s.s)}`}
+$("#list").addEventListener("click",e=>{
+ const b=e.target.closest(".it");if(!b)return;const id=b.dataset.id,it=BYID[id];const i=S.done.indexOf(id);
+ if(i>=0){S.done.splice(i,1);b.classList.remove("on");b.setAttribute("aria-pressed","false")}
+ else{S.done.push(id);b.classList.add("on");b.setAttribute("aria-pressed","true");
+  const r=b.getBoundingClientRect(),p=document.createElement("div");p.className="pop r"+it.r;
+  p.textContent=it.r===6?(S.lang==="bn"?"ছক্কা!":"SIX!"):it.r===4?(S.lang==="bn"?"চার!":"FOUR!"):"+"+D(2);
+  p.style.left=(r.left+r.width/2)+"px";p.style.top=(r.top+4)+"px";document.body.appendChild(p);setTimeout(()=>p.remove(),850)}
+ save();updBoard();
+});
+$("#endInn").addEventListener("click",()=>{if(S.inn===0){$("#brkRuns").textContent=D(score().a);show("brk")}else{show("res");renderRes()}});
+$("#start2").addEventListener("click",()=>{S.inn=1;save();renderInn();show("inn")});
+$("#againBtn").addEventListener("click",()=>{S.inn=0;save();renderInn();show("inn")});
+
+// ---------- canvas helpers ----------
+const fontsReady=(async()=>{try{await Promise.all([document.fonts.load('400 40px "Kalpurush"',"অআকখ০১২KORI"),document.fonts.load('700 40px "Hind Siliguri"'),document.fonts.load('600 40px "Hind Siliguri"')]);await document.fonts.ready}catch(e){}})();
+const F=(w,s,f)=>`${w} ${s}px "Kalpurush", "Hind Siliguri", sans-serif`;
+function rr(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
+function fit(c,txt,max){let s=txt;while(c.measureText(s).width>max&&s.length>1)s=s.slice(0,-1);return s===txt?s:s.slice(0,-1)+"…"}
+function wrap(c,txt,x,y,max,lh,lines){const w=txt.split(" ");let ln="",n=0;for(let i=0;i<w.length;i++){const tst=ln?ln+" "+w[i]:w[i];if(c.measureText(tst).width>max&&ln){c.fillText(ln,x,y+n*lh);ln=w[i];n++;if(n>=lines-1){ln=fit(c,w.slice(i).join(" "),max);break}}else ln=tst}c.fillText(ln,x,y+n*lh);return n+1}
+function ball(c,x,y,r){const g=c.createRadialGradient(x-r*.35,y-r*.4,r*.1,x,y,r);g.addColorStop(0,"#ff7a86");g.addColorStop(.55,"#e8263a");g.addColorStop(1,"#8f0d19");c.fillStyle=g;c.beginPath();c.arc(x,y,r,0,7);c.fill();
+ c.strokeStyle="rgba(255,255,255,.75)";c.lineWidth=r*.06;c.setLineDash([r*.12,r*.1]);[-1,1].forEach(d=>{c.beginPath();c.ellipse(x+d*r*.32,y,r*.55,r*.95,0,d>0?Math.PI*.6:-Math.PI*.4,d>0?Math.PI*1.4:Math.PI*.4);c.stroke()});c.setLineDash([])}
+function bg(c,T,W,H,cy){c.fillStyle=T.bg;c.fillRect(0,0,W,H);
+ if(T.lights){[[120,0],[W-120,0]].forEach(([x,y])=>{const g=c.createRadialGradient(x,y,10,x,y,700);g.addColorStop(0,"rgba(255,244,200,.22)");g.addColorStop(1,"rgba(255,244,200,0)");c.fillStyle=g;c.fillRect(0,0,W,H)})}
+ c.strokeStyle=T.ring;c.lineWidth=4;[300,470,640].forEach(r=>{c.beginPath();c.arc(W/2,cy,r,0,7);c.stroke()})}
+function head(c,T,W,y,sub){c.textAlign="left";c.fillStyle=T.ink;c.font=F(800,68,"n");c.fillText("KORI",72,y);const kw=c.measureText("KORI").width;c.fillStyle=T.mute;c.font=F(600,34);c.fillText(sub,72+kw+20,y-4)}
+
+// ---------- scorecard ----------
+async function loadImg(src){const im=new Image();im.src=src;await new Promise(ok=>{im.onload=ok;im.onerror=ok;if(im.complete)ok()});return im}
+async function drawCard(P){
+ await fontsReady;
+ const cv=document.createElement("canvas"),st=P.fmt==="story",W=1080,H=st?1920:1080;cv.width=W;cv.height=H;
+ const c=cv.getContext("2d"),T=THEMES[P.theme]||THEMES[0],s=scoreOf(P.done),L=S.lang,SL=L==="bn"?"sbn":"sen";
+ bg(c,T,W,H,st?380:300);ball(c,W-120,st?112:100,st?50:44);head(c,T,W,st?122:110,t("cardSub"));
+ // identity: big avatar with a two-innings ring, name and district stacked beside it
+ const r=st?66:52,acx=72+r,acy=st?(122+38+r):(110+30+r);
+ const hasAv=!!(P.photo||P.name);
+ if(hasAv){
+  c.lineWidth=st?8:7;c.strokeStyle=T.me;c.beginPath();c.arc(acx,acy,r+10,Math.PI*.5,Math.PI*1.5);c.stroke();
+  c.strokeStyle=T.tog;c.beginPath();c.arc(acx,acy,r+10,Math.PI*1.5,Math.PI*2.5);c.stroke();
+  c.save();c.beginPath();c.arc(acx,acy,r,0,7);c.clip();
+  if(P.photo){const im=await loadImg(P.photo);try{c.drawImage(im,acx-r,acy-r,r*2,r*2)}catch(e){}}
+  else{c.fillStyle=T.pill;c.fillRect(acx-r,acy-r,r*2,r*2);c.fillStyle=T.pillInk;c.textAlign="center";c.font=F(800,r*1.05,"n");const ch=firstChar(P.name);c.fillText(ch,acx,acy+r*.37)}
+  c.restore();
+ }
+ const tx=hasAv?acx+r+34:72;c.textAlign="left";
+ if(P.name){c.fillStyle=T.ink;c.font=F(700,st?50:42);c.fillText(fit(c,P.name,W-tx-80),tx,acy+(P.dist?-4:16))}
+ if(P.dist){c.fillStyle=T.mute;c.font=F(600,st?34:30);c.fillText(P.dist,tx,acy+(P.name?(st?42:36):12))}
+ // score block
+ const sz=st?250:200,by=st?(hasAv||P.dist?540:470):(hasAv||P.dist?440:390);
+ c.textAlign="left";c.fillStyle=T.ink;c.font=F(800,sz,"n");const sc=D(s.tot),sw=c.measureText(sc).width;c.fillText(sc,72,by);
+ c.fillStyle=T.star;c.font=F(800,sz*.42,"n");c.fillText("*",72+sw+4,by-sz*.48);
+ const rx=72+sw+sz*.3+40,rw=W-72-rx,tt=t("titles")[s.ti];
+ c.font=F(700,st?40:34);const pw=Math.min(rw,c.measureText(tt).width+56),ph=st?66:56,py=by-sz*.62;
+ c.fillStyle=T.pill;rr(c,rx,py,pw,ph,ph/2);c.fill();c.fillStyle=T.pillInk;c.textAlign="center";c.fillText(fit(c,tt,pw-30),rx+pw/2,py+ph*.68);
+ c.textAlign="left";c.fillStyle=T.mute;c.font=F(600,st?34:30);c.fillText(`${t("fours")} ${D(s.f)}  ·  ${t("sixes")} ${D(s.s)}`,rx,py+ph+(st?54:46));
+ if(s.allr){const al=t("allr");c.font=F(700,st?30:28);const aw=c.measureText(al).width+40,ah=st?50:44,ay=py+ph+(st?74:62);c.strokeStyle=T.star;c.lineWidth=4;rr(c,rx,ay,aw,ah,ah/2);c.stroke();c.fillStyle=T.star;c.textAlign="center";c.fillText(al,rx+aw/2,ay+ah*.7)}
+ const inn=[[t("inn")[0],t("p1"),s.a,T.me,T.meInk],[t("inn")[1],t("p2"),s.b,T.tog,T.togInk]];
+ // innings panel: tinted box with numbered badge, so the two innings read as separate halves
+ function panel(k,x,y,w,h,compact){const [nm,pl,v,col,ink]=inn[k];
+  c.save();c.globalAlpha=.09;c.fillStyle=col;rr(c,x,y,w,h,28);c.fill();c.globalAlpha=.45;c.strokeStyle=col;c.lineWidth=2.5;rr(c,x,y,w,h,28);c.stroke();c.restore();
+  const br=compact?20:24,bx=x+24+br,bY=y+(compact?40:46);c.fillStyle=col;c.beginPath();c.arc(bx,bY,br,0,7);c.fill();
+  c.fillStyle=ink;c.textAlign="center";c.font=F(800,compact?24:28,"n");c.fillText(D(k+1),bx,bY+(compact?8:10));
+  c.textAlign="left";c.fillStyle=T.ink;c.font=F(700,compact?26:34);c.fillText(fit(c,compact?pl:nm+" · "+pl,w-(compact?150:230)),bx+br+16,bY+(compact?9:12));
+  c.textAlign="right";c.font=F(800,compact?36:42,"n");c.fillText(compact?D(v):D(v)+" / "+D(58),x+w-24,bY+(compact?12:14))}
+ if(st){
+  const px=48,pw2=W-96,ph2=520,p1=st&&(hasAv||P.dist)?600:540,p2=p1+ph2+64;
+  [p1,p2].forEach((y0,k)=>{panel(k,px,y0,pw2,ph2);const col=inn[k][3],ink=inn[k][4];
+   const tw=(pw2-48-32)/3,th=76;
+   ITEMS[k].forEach((it,i)=>{const tx2=px+24+(i%3)*(tw+16),ty=y0+92+Math.floor(i/3)*(th+12),on=P.done.includes(it.id);
+    if(on){c.fillStyle=col;rr(c,tx2,ty,tw,th,16);c.fill()}else{c.fillStyle=T.bg;rr(c,tx2,ty,tw,th,16);c.fill();c.strokeStyle=T.track;c.lineWidth=2.5;rr(c,tx2+1.25,ty+1.25,tw-2.5,th-2.5,15);c.stroke()}
+    c.globalAlpha=on?1:.5;c.fillStyle=on?ink:T.mute;c.textAlign="right";c.font=F(800,24,"n");c.fillText(D(it.r),tx2+tw-12,ty+28);
+    c.textAlign="left";c.font=F(600,24);wrapLines(c,it[SL],tx2+14,ty,tw-50,th);c.globalAlpha=1})});
+  // innings break marker between the two panels
+  const my=p1+ph2+32,lb=t("brk");c.font=F(700,26);const lw=c.measureText(lb).width+44;
+  c.strokeStyle=T.track;c.lineWidth=3;c.setLineDash([10,10]);c.beginPath();c.moveTo(80,my);c.lineTo(W/2-lw/2-14,my);c.moveTo(W/2+lw/2+14,my);c.lineTo(W-80,my);c.stroke();c.setLineDash([]);
+  c.fillStyle=T.pill;rr(c,W/2-lw/2,my-21,lw,42,21);c.fill();c.fillStyle=T.pillInk;c.textAlign="center";c.fillText(lb,W/2,my+9);
+  c.fillStyle=T.mute;c.font=F(600,27);c.fillText(t("legend"),W/2,p2+ph2+40);
+ }else{
+  const cw=(W-96-24)/2,y0=hasAv||P.dist?490:450,ph3=920-y0-14;
+  inn.forEach(([nm,pl,v,col,ink],k)=>{const x0=48+k*(cw+24);panel(k,x0,y0,cw,ph3,true);
+   ITEMS[k].forEach((it,i)=>{const dx=x0+30+i*(cw-60)/14,on=P.done.includes(it.id);c.beginPath();c.arc(dx,y0+92,10,0,7);if(on){c.fillStyle=col;c.fill()}else{c.strokeStyle=T.track;c.lineWidth=3;c.stroke()}});
+   const mine=ITEMS[k].filter(it=>P.done.includes(it.id)).sort((p,q)=>q.r-p.r),bw=cw-48;
+   if(!mine.length){c.textAlign="left";c.fillStyle=T.mute;c.font=F(600,26);c.fillText(t("none"),x0+24,y0+160)}
+   mine.slice(0,4).forEach((it,i)=>{const yy=y0+122+i*66;c.fillStyle=col;rr(c,x0+24,yy,bw,56,14);c.fill();c.fillStyle=ink;c.textAlign="left";c.font=F(600,25);c.fillText(fit(c,it[SL],bw-56),x0+40,yy+37);c.textAlign="right";c.font=F(800,25,"n");c.fillText(D(it.r),x0+24+bw-14,yy+37)});
+   if(mine.length>4){c.textAlign="left";c.fillStyle=T.mute;c.font=F(600,23);c.fillText(t("more")(D(mine.length-4)),x0+24,y0+122+4*66+20)}
+  });
+ }
+ if(P.delta){c.textAlign="right";c.fillStyle=T.mute;c.font=F(700,30);c.fillText(`${t("prev")} ${D(P.delta)}*  →  ${t("now")} ${D(s.tot)}*`,W-72,st?190:170)}
+ const band=st?1752:930;c.fillStyle=T.band;c.fillRect(0,band,W,H-band);c.fillStyle=T.bandInk;c.textAlign="center";
+ c.font=F(800,st?80:62,"n");c.fillText(t("q"),W/2,band+(st?92:72));
+ c.font=F(600,st?32:26);c.fillText(t("going")+(SITE?"  ·  "+SITE:"  ·  KORI"),W/2,band+(st?146:124));
+ return cv.toDataURL("image/png");
+}
+function firstChar(n){try{if(window.Intl&&Intl.Segmenter){const g=[...new Intl.Segmenter(undefined,{granularity:"grapheme"}).segment(n.trim())];return g.length?g[0].segment.toUpperCase():""}}catch(e){}return [...n.trim()][0]||""}
+function wrapLines(c,txt,x,ty,max,th){const w=txt.split(" "),ls=[];let ln="";for(const word of w){const tst=ln?ln+" "+word:word;if(c.measureText(tst).width>max&&ln){ls.push(ln);ln=word}else ln=tst}ls.push(ln);
+ const L=ls.slice(0,2);if(ls.length>2)L[1]=fit(c,ls.slice(1).join(" "),max);const lh=30,y=ty+th/2-(L.length-1)*lh/2+9;L.forEach((l,i)=>c.fillText(l,x,y+i*lh))}
+function myCard(){const prev=S.last&&S.last.score!==score().tot&&Date.now()-S.last.at>864e5?S.last.score:0;
+ return {done:S.done,fmt:S.fmt,theme:S.theme,name:S.sName?S.name:"",dist:S.sDist?distName():"",photo:S.sPhoto?S.photo:"",delta:prev}}
+const DEMO=["m1","m2","m3","m7","m8","m9","m12","t1","t2","t3","t5","t7","t9","t11","t13"];
+async function drawDemo(){const im=$("#demoImg");if(!im)return;im.src=await drawCard({done:DEMO,fmt:"story",theme:0,name:S.lang==="bn"?"রাকিব":"Rakib",dist:S.lang==="bn"?"রংপুর":"Rangpur",photo:"",delta:0})}
+async function renderRes(){
+ const s=score();$("#resH").textContent=t("resH");$("#resSub").textContent=t("sub")(D(s.tot),t("titles")[s.ti]);
+ document.querySelectorAll("#fmt button").forEach(b=>{b.classList.toggle("on",b.dataset.v===S.fmt);b.textContent=t(b.dataset.v)});
+ $("#themes").innerHTML=THEMES.map((T,i)=>`<button class="sw${i===S.theme?" on":""}" data-i="${i}" style="background:linear-gradient(135deg,${T.bg} 55%,${T.band} 55%);color:${T.ink}" aria-label="${t("themesN")[i]}">${t("themesN")[i]}</button>`).join("");
+ $("#cName").checked=S.sName;$("#cPhoto").checked=S.sPhoto;$("#cDist").checked=S.sDist;
+ const img=$("#cardImg");img.className="cardimg "+(S.fmt==="story"?"st":"sq");img.src=await drawCard(myCard());
+}
+$("#fmt").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;S.fmt=b.dataset.v;save();renderRes()});
+$("#themes").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;S.theme=+b.dataset.i;save();renderRes()});
+[["#cName","sName"],["#cPhoto","sPhoto"],["#cDist","sDist"]].forEach(([q,k])=>$(q).addEventListener("change",e=>{S[k]=e.target.checked;save();renderRes()}));
+
+// ---------- save / share / copy ----------
+function toast(m){const e=$("#toast");e.textContent=m;e.classList.add("on");clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove("on"),2200)}
+function markPlayed(){const s=score();if(!S.last||Date.now()-S.last.at>864e5){S.last={score:s.tot,at:Date.now()};save()}}
+function toBlob(u){const [h,b]=u.split(",");const bin=atob(b),a=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);return new Blob([a],{type:(h.match(/:(.*?);/)||[])[1]||"image/png"})}
+let DL=null;try{if(window.claude&&typeof window.claude.use==="function")window.claude.use("downloads").then(n=>{DL=n}).catch(()=>{})}catch(e){}
+async function download(url,name){markPlayed();if(DL){try{await DL.save({filename:name,data:toBlob(url)});return}catch(e){if(e&&e.code==="declined")return}}
+ try{const a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove()}catch(e){}}
+async function shareImg(url,name){markPlayed();try{const blob=toBlob(url);const file=new File([blob],name,{type:"image/png"});
+ if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],text:caption()});return}}catch(e){if(e&&e.name==="AbortError")return}
+ toast(t("shareNo"))}
+function link(){const s=score();const first=(S.name||"").split(" ")[0];const base=SITE?"https://"+SITE+"/":(location.origin&&location.origin!=="null"?location.origin+location.pathname:"");
+ if(!base)return"";const q=new URLSearchParams();if(first)q.set("n",first);q.set("s",s.tot);return base+"?"+q}
+function caption(){const s=score();const dd=S.done.map(id=>BYID[id]).filter(Boolean).sort((x,y)=>y.r-x.r).slice(0,5).map(i=>S.lang==="bn"?i.sbn:i.sen).join(", ");return t("cap")(D(s.tot),D(s.a),D(s.b),t("titles")[s.ti],link(),dd)}
+async function copy(txt){try{await navigator.clipboard.writeText(txt);toast(t("copied"))}catch(e){toast(t("noCopy"))}}
+$("#saveBtn").addEventListener("click",()=>download($("#cardImg").src,"kori-scorecard.png"));
+$("#shareBtn").addEventListener("click",()=>shareImg($("#cardImg").src,"kori-scorecard.png"));
+$("#capBtn").addEventListener("click",()=>copy(caption()));
+$("#linkBtn").addEventListener("click",()=>{const l=link();l?copy(l):toast(t("noCopy"))});
+
+// ---------- next over ----------
+$("#nextBtn").addEventListener("click",()=>{show("nxt");renderNext()});
+$("#backRes").addEventListener("click",()=>{show("res");renderRes()});
+function renderNext(){
+ S.targets=S.targets.filter(id=>!S.done.includes(id));
+ const open=ITEMS.flat().filter(i=>!S.done.includes(i.id));
+ $("#chips").innerHTML=open.map(i=>`<button class="chip${S.targets.includes(i.id)?" on":""}" data-id="${i.id}"><b class="num">${D(i.r)}</b> · ${i[S.lang]}</button>`).join("");
+ drawTargets();
+}
+$("#chips").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;const id=b.dataset.id,i=S.targets.indexOf(id);
+ if(i>=0)S.targets.splice(i,1);else{if(S.targets.length>=3){toast(t("max3"));return}S.targets.push(id)}save();renderNext()});
+async function drawTargets(){
+ const w=$("#tgtWrap");if(!S.targets.length){w.hidden=true;return}w.hidden=false;await fontsReady;
+ const cv=$("#cv"),W=1080,H=1080;cv.width=W;cv.height=H;const c=cv.getContext("2d"),T=THEMES[S.theme]||THEMES[0],s=score();
+ bg(c,T,W,H,520);ball(c,W-140,118,50);head(c,T,W,120,t("cardSub"));
+ c.textAlign="left";c.fillStyle=T.ink;c.font=F(800,78,"n");c.fillText(t("myNext"),72,250);
+ c.fillStyle=T.mute;c.font=F(600,32);c.fillText(`${t("now2")}: ${D(s.tot)}*`+(S.sName&&S.name?"  ·  "+S.name:""),72,305);
+ S.targets.forEach((id,n)=>{const it=BYID[id],y=360+n*170;c.fillStyle=T.track;rr(c,72,y,W-144,145,28);c.fill();
+  c.fillStyle=it.r===6?"#e8263a":it.r===4?"#006a4e":"#6c7d75";c.beginPath();c.arc(150,y+72,46,0,7);c.fill();
+  c.fillStyle="#fff";c.textAlign="center";c.font=F(800,44,"n");c.fillText(D(it.r),150,y+88);
+  c.textAlign="left";c.fillStyle=T.ink;c.font=F(600,36);const one=c.measureText(it[S.lang]).width<=W-144-180;wrap(c,it[S.lang],222,one?y+86:y+64,W-144-180,46,2)});
+ c.fillStyle=T.band;c.fillRect(0,950,W,130);c.fillStyle=T.bandInk;c.textAlign="center";c.font=F(700,40);c.fillText(t("in30"),W/2,1028);
+ $("#tgtImg").src=cv.toDataURL("image/png");
+}
+$("#tSave").addEventListener("click",()=>download($("#tgtImg").src,"kori-next-over.png"));
+$("#tShare").addEventListener("click",()=>shareImg($("#tgtImg").src,"kori-next-over.png"));
+
+applyLang();
+}
+</script>
+</body>
+</html>
