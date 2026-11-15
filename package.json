@@ -1,0 +1,23 @@
+{
+  "name": "kori-life",
+  "version": "1.0.0",
+  "description": "KORI Scorecard - Life scorecard for personal growth and community building",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kmemrul/kori.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kmemrul/kori/issues"
+  },
+  "homepage": "https://github.com/kmemrul/kori#readme",
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1"
+  }
+}
