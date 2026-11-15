@@ -82,6 +82,8 @@ input[type=text],select{width:100%;min-height:50px;border-radius:12px;border:1.5
 .list{display:grid;gap:10px;margin:6px 0 20px}
 .it{display:flex;align-items:center;gap:12px;text-align:left;width:100%;min-height:64px;padding:10px 14px;border-radius:16px;border:1.5px solid var(--line);background:var(--card);cursor:pointer;position:relative;transition:border-color .15s,background .15s}
 .it .tx{flex:1;font-size:16px;line-height:1.35}
+.per{display:table;font-size:13px;font-weight:600;line-height:1.2;padding:3px 10px;border-radius:999px;margin-bottom:5px;background:light-dark(#ece8dc,#20352b);color:var(--mute)}
+.it.on .per{background:var(--g);color:#fff}
 .it .ck{flex:none;width:28px;height:28px;border-radius:8px;border:2px solid var(--line);display:grid;place-items:center}
 .it.on{border-color:var(--g);background:light-dark(#e7f3ee,#173328)}
 .it.on .ck{background:var(--g);border-color:var(--g)}
@@ -206,43 +208,44 @@ input[type=text],select{width:100%;min-height:50px;border-radius:12px;border:1.5
 const SITE = ""; // e.g. "kori.com.bd" once you have a domain; shown on the card and used in challenge links
 
 // ---------- data ----------
-const SH = {"m1": ["বই পড়েছি", "Read a book"], "m2": ["পরিবারের জন্য রান্না", "Cooked for family"], "m3": ["সোশ্যাল মিডিয়া ছাড়া ১ দিন", "A day off social media"], "m4": ["৫ কিমি হাঁটা বা সাইকেল", "Walked or cycled 5 km"], "m5": ["ইউটিউবে শিখে কাজে লাগানো", "Learned online, used it"], "m6": ["৭ দিন সূর্যোদয়ের আগে ওঠা", "7 days before sunrise"], "m7": ["৫ মিনিট ইংরেজিতে কথা", "5 minutes of English"], "m8": ["সাঁতার জানি", "I can swim"], "m9": ["৩০ দিনের ভালো অভ্যাস", "A 30-day good habit"], "m10": ["৫০+ মানুষের সামনে কথা", "Spoke to 50+ people"], "m11": ["অনলাইন কোর্স শেষ", "Finished a course"], "m12": ["নিজের দক্ষতায় প্রথম আয়", "First earnings"], "m13": ["প্রতিযোগিতায় পুরস্কার", "Won a competition"], "m14": ["আমার কাজ দেখেছে ১,০০০+", "Seen by 1,000+ people"], "m15": ["দল নিয়ে প্রজেক্ট শেষ", "Led a team project"], "t1": ["৩০ দিন ময়লা ডাস্টবিনে", "30 days, no littering"], "t2": ["৬ মাস প্রাণীকে কষ্ট দিইনি", "Kind to animals, 6 months"], "t3": ["বসার জায়গা ছেড়ে দেওয়া", "Gave up my seat"], "t4": ["৩০ দিন গুজব শেয়ার করিনি", "No rumours for 30 days"], "t5": ["দাদা-দাদি/নানা-নানিকে ফোন", "Called my grandparents"], "t6": ["বয়স্ককে স্মার্টফোন শেখানো", "Taught an elder a phone"], "t7": ["গাছ লাগিয়ে যত্ন", "Planted and raised a tree"], "t8": ["পরিচ্ছন্নতা অভিযান", "Joined a clean-up"], "t9": ["রক্তদান বা রক্ত জোগাড়", "Blood for a patient"], "t10": ["বুলিংয়ের বিরুদ্ধে পাশে", "Stood up to bullying"], "t11": ["বিনা পয়সায় পড়ানো", "Taught someone for free"], "t12": ["দুর্যোগে স্বেচ্ছাসেবা", "Disaster relief volunteer"], "t13": ["কমিউনিটি প্রজেক্ট", "Community project"], "t14": ["চাকরি/ভর্তিতে সাহায্য", "Helped with a job or admission"], "t15": ["চলমান উদ্যোগ শুরু", "Started an initiative"]};
+const SH = {"m1": ["বই পড়েছি", "Read a book"], "m2": ["পরিবারের জন্য রান্না", "Cooked for family"], "m3": ["সোশ্যাল মিডিয়া ছাড়া ১ দিন", "A day off social media"], "m4": ["৫ কিমি হাঁটা বা সাইকেল", "Walked or cycled 5 km"], "m5": ["অনলাইনে শিখে কাজে লাগানো", "Learned online, used it"], "m6": ["৭ দিন সূর্যোদয়ের আগে ওঠা", "7 days before sunrise"], "m7": ["৫ মিনিট ইংরেজিতে কথা", "5 minutes of English"], "m8": ["সাঁতার জানি", "I can swim"], "m9": ["৩০ দিনের ভালো অভ্যাস", "A 30-day good habit"], "m10": ["৫০+ মানুষের সামনে কথা", "Spoke to 50+ people"], "m11": ["অনলাইন কোর্স শেষ", "Finished a course"], "m12": ["দক্ষতা দিয়ে আয়", "Earned from my skill"], "m13": ["প্রতিযোগিতায় পুরস্কার", "Won a competition"], "m14": ["আমার কাজ দেখেছে ১,০০০+", "Seen by 1,000+ people"], "m15": ["দল নিয়ে প্রজেক্ট শেষ", "Led a team project"], "t1": ["৩০ দিন ময়লা ডাস্টবিনে", "30 days, no littering"], "t2": ["৬ মাস প্রাণীকে কষ্ট দিইনি", "Kind to animals, 6 months"], "t3": ["বসার জায়গা ছেড়ে দেওয়া", "Gave up my seat"], "t4": ["৩০ দিন গুজব শেয়ার করিনি", "No rumours for 30 days"], "t5": ["দাদা-দাদি/নানা-নানিকে ফোন", "Called my grandparents"], "t6": ["বয়স্ককে স্মার্টফোন শেখানো", "Taught an elder a phone"], "t7": ["গাছ লাগিয়ে যত্ন", "Planted and raised a tree"], "t8": ["পরিচ্ছন্নতা অভিযান", "Joined a clean-up"], "t9": ["রক্তদান বা রক্ত জোগাড়", "Blood for a patient"], "t10": ["বুলিংয়ের বিরুদ্ধে পাশে", "Stood up to bullying"], "t11": ["বিনা পয়সায় পড়ানো", "Taught someone for free"], "t12": ["দুর্যোগে স্বেচ্ছাসেবা", "Disaster relief volunteer"], "t13": ["কমিউনিটি প্রজেক্ট", "Community project"], "t14": ["চাকরি/ভর্তিতে সাহায্য", "Helped with a job or admission"], "t15": ["চলমান উদ্যোগ শুরু", "Started an initiative"]};
 const ITEMS = [
  [ // 1st innings: KORI Me
-  ["m1",2,"গত এক বছরে পাঠ্যবইয়ের বাইরে একটি পুরো বই পড়েছি","Read a full book outside the syllabus in the last year"],
-  ["m2",2,"পরিবারের জন্য এক বেলার পুরো রান্না করেছি","Cooked a full meal for my family"],
-  ["m3",2,"সোশ্যাল মিডিয়া ছাড়া পুরো একটি দিন কাটিয়েছি","Spent one full day without social media"],
-  ["m4",2,"একদিনে ৫ কিলোমিটার হেঁটেছি বা সাইকেল চালিয়েছি","Walked or cycled 5 km in one day"],
-  ["m5",2,"ইউটিউব থেকে নতুন কিছু শিখে সত্যিই কাজে লাগিয়েছি","Learned something on YouTube and actually used it"],
-  ["m6",4,"টানা ৭ দিন সূর্য ওঠার আগে উঠেছি","Woke before sunrise 7 days in a row"],
-  ["m7",4,"ইংরেজিতে টানা ৫ মিনিট কথা বলেছি","Held a 5-minute conversation in English"],
-  ["m8",4,"সাঁতার জানি","I can swim"],
-  ["m9",4,"কোনো ভালো অভ্যাস টানা ৩০ দিন ধরে রেখেছি","Kept a good habit for 30 days straight"],
-  ["m10",4,"৫০ জনের বেশি মানুষের সামনে কথা বলেছি","Spoke in front of 50+ people"],
-  ["m11",4,"একটি অনলাইন কোর্স পুরো শেষ করেছি","Finished a full online course"],
-  ["m12",6,"নিজের দক্ষতা দিয়ে প্রথম আয় করেছি","Earned my first money from my own skill"],
-  ["m13",6,"কোনো প্রতিযোগিতায় পুরস্কার পেয়েছি","Won a prize in a competition"],
-  ["m14",6,"আমার তৈরি কিছু ১,০০০+ মানুষ দেখেছে","Made something seen by 1,000+ people"],
-  ["m15",6,"একটি দলকে নেতৃত্ব দিয়ে প্রজেক্ট শেষ করেছি","Led a team to finish a project"]
+  ["m1", 2, "1y", "পাঠ্যবইয়ের বাইরে অন্তত একটি বই পুরো পড়েছি", "Read at least one full book outside the syllabus"],
+  ["m2", 2, "3m", "পরিবারের জন্য অন্তত একবার পুরো এক বেলার রান্না করেছি", "Cooked a full meal for my family at least once"],
+  ["m3", 2, "1m", "সোশ্যাল মিডিয়া ছাড়া পুরো একটি দিন কাটিয়েছি", "Spent one full day without social media"],
+  ["m4", 2, "1m", "একদিনে ৫ কিলোমিটার হেঁটেছি বা সাইকেল চালিয়েছি", "Walked or cycled 5 km in a single day"],
+  ["m5", 2, "6m", "ইউটিউব বা অনলাইন থেকে নতুন কিছু শিখে সত্যিই কাজে লাগিয়েছি", "Learned something new online and actually put it to use"],
+  ["m6", 4, "3m", "টানা ৭ দিন সূর্য ওঠার আগে ঘুম থেকে উঠেছি", "Woke up before sunrise 7 days in a row"],
+  ["m7", 4, "6m", "কারও সাথে ইংরেজিতে টানা ৫ মিনিট কথা বলেছি", "Held a 5-minute conversation with someone in English"],
+  ["m8", 4, "now", "সাঁতার জানি: নিজে নিজে অন্তত ২৫ মিটার সাঁতরাতে পারি", "I can swim at least 25 metres on my own"],
+  ["m9", 4, "1y", "কোনো ভালো অভ্যাস টানা ৩০ দিন ধরে রেখেছি", "Kept a good habit going for 30 days straight"],
+  ["m10", 4, "2y", "৫০ জনের বেশি মানুষের সামনে কথা বলেছি বা উপস্থাপনা করেছি", "Spoke or presented in front of 50+ people"],
+  ["m11", 4, "1y", "একটি অনলাইন কোর্স পুরোটা শেষ করেছি", "Finished a full online course"],
+  ["m12", 6, "2y", "নিজের দক্ষতা দিয়ে টাকা আয় করেছি, টিউশনি ছাড়া (যেমন ফ্রিল্যান্সিং, ডিজাইন, ছোট ব্যবসা)", "Earned money from my own skill, not counting tuition (e.g. freelancing, design, a small business)"],
+  ["m13", 6, "2y", "কোনো প্রতিযোগিতায় পুরস্কার পেয়েছি (খেলা, বিতর্ক, অলিম্পিয়াড, শিল্প বা অন্য কিছু)", "Won a prize in a competition (sport, debate, olympiad, art or anything else)"],
+  ["m14", 6, "1y", "আমার তৈরি কোনো লেখা, ভিডিও, ডিজাইন বা কাজ ১,০০০+ মানুষ দেখেছে", "Something I made (writing, video, design, work) was seen by 1,000+ people"],
+  ["m15", 6, "2y", "একটি দলকে নেতৃত্ব দিয়ে কোনো প্রজেক্ট বা আয়োজন শেষ করেছি", "Led a team to complete a project or event"]
  ],
  [ // 2nd innings: KORI Together
-  ["t1",2,"গত ৩০ দিন যেখানে-সেখানে না ফেলে ময়লা ডাস্টবিনে ফেলেছি","Used a bin and didn't litter for the last 30 days"],
-  ["t2",2,"গত ৬ মাসে কোনো প্রাণীকে কষ্ট দিইনি","Didn't hurt any animal in the last 6 months"],
-  ["t3",2,"বয়স্ক, অন্তঃসত্ত্বা বা প্রতিবন্ধী কাউকে বসার জায়গা ছেড়ে দিয়েছি","Gave my seat to an elder, a pregnant woman or a person with a disability"],
-  ["t4",2,"গত ৩০ দিন যাচাই না করে কোনো খবর শেয়ার করিনি","Didn't share any unverified news for the last 30 days"],
-  ["t5",2,"এই মাসে শুধু গল্প করতে দাদা-দাদি/নানা-নানি বা বয়স্ক আত্মীয়কে ফোন করেছি","Called a grandparent or elderly relative this month just to talk"],
-  ["t6",4,"বয়স্ক কাউকে নিরাপদে স্মার্টফোন ব্যবহার শিখিয়েছি","Taught an elder to use a smartphone safely"],
-  ["t7",4,"গাছ লাগিয়ে অন্তত ৩ মাস যত্ন নিয়েছি","Planted a tree and cared for it for 3+ months"],
-  ["t8",4,"কোনো পাবলিক জায়গা পরিষ্কারে অংশ নিয়েছি","Joined a clean-up of a public place"],
-  ["t9",4,"রক্ত দিয়েছি বা রোগীর জন্য রক্ত জোগাড় করে দিয়েছি","Donated blood or found a blood donor for a patient"],
-  ["t10",4,"বুলিং বা হয়রানির শিকার কারও পাশে দাঁড়িয়েছি","Stood up for someone being bullied or harassed"],
-  ["t11",4,"বিনা পয়সায় কাউকে পড়িয়েছি বা কোনো দক্ষতা শিখিয়েছি","Taught or tutored someone for free"],
-  ["t12",6,"বন্যা, শীত বা দুর্যোগে ত্রাণ কাজে স্বেচ্ছাসেবা দিয়েছি","Volunteered in flood, winter or disaster relief"],
-  ["t13",6,"দল নিয়ে একটি কমিউনিটি প্রজেক্ট আয়োজন করেছি","Organised a community project with a team"],
-  ["t14",6,"কাউকে চাকরি, ভর্তি বা বৃত্তি পেতে সাহায্য করেছি","Helped someone get a job, admission or scholarship"],
-  ["t15",6,"এমন একটি উদ্যোগ শুরু করেছি যা এখনো চলছে","Started an initiative that is still running"]
+  ["t1", 2, "1m", "ময়লা যেখানে-সেখানে না ফেলে সবসময় ডাস্টবিনে ফেলেছি", "Always used a bin and never littered"],
+  ["t2", 2, "6m", "কোনো প্রাণীকে আঘাত করিনি বা কষ্ট দিইনি", "Didn't hurt or harm any animal"],
+  ["t3", 2, "3m", "বাসে বা লাইনে বয়স্ক, অন্তঃসত্ত্বা বা প্রতিবন্ধী কাউকে জায়গা ছেড়ে দিয়েছি", "Gave my seat or place in line to an elder, a pregnant woman or a person with a disability"],
+  ["t4", 2, "1m", "যাচাই না করে কোনো খবর বা পোস্ট শেয়ার করিনি", "Didn't share any news or post without checking it first"],
+  ["t5", 2, "1m", "শুধু গল্প করতে দাদা-দাদি/নানা-নানি বা বয়স্ক আত্মীয়কে ফোন করেছি বা দেখা করেছি", "Called or visited a grandparent or elderly relative just to talk"],
+  ["t6", 4, "6m", "বয়স্ক কাউকে স্মার্টফোন বা অনলাইন সেবা নিরাপদে ব্যবহার করতে শিখিয়েছি", "Taught an elder to use a smartphone or online service safely"],
+  ["t7", 4, "1y", "গাছ লাগিয়ে অন্তত ৩ মাস যত্ন নিয়েছি", "Planted a tree and looked after it for 3+ months"],
+  ["t8", 4, "1y", "রাস্তা, স্কুল, মাঠ বা কোনো পাবলিক জায়গা পরিষ্কারে অংশ নিয়েছি", "Helped clean a street, school, field or other public place"],
+  ["t9", 4, "1y", "রক্ত দিয়েছি, বা কোনো রোগীর জন্য রক্তদাতা খুঁজে দিয়েছি", "Donated blood, or found a blood donor for a patient"],
+  ["t10", 4, "1y", "বুলিং বা হয়রানির শিকার কারও পক্ষে দাঁড়িয়েছি", "Stood up for someone who was bullied or harassed"],
+  ["t11", 4, "1y", "বিনা পয়সায় কাউকে পড়িয়েছি বা কোনো দক্ষতা শিখিয়েছি", "Taught someone a subject or skill for free"],
+  ["t12", 6, "2y", "বন্যা, শীত বা যেকোনো দুর্যোগে ত্রাণ কাজে স্বেচ্ছাসেবা দিয়েছি", "Volunteered in flood, winter or other disaster relief"],
+  ["t13", 6, "2y", "দল নিয়ে একটি কমিউনিটি প্রজেক্ট আয়োজন করেছি", "Organised a community project with a team"],
+  ["t14", 6, "2y", "কাউকে চাকরি, ভর্তি বা বৃত্তি পেতে সরাসরি সাহায্য করেছি", "Directly helped someone get a job, admission or scholarship"],
+  ["t15", 6, "run", "এমন একটি উদ্যোগ, ক্লাব বা গ্রুপ শুরু করেছি যা এখনো চলছে", "Started an initiative, club or group that is still running"]
  ]
-].map((inn,k)=>inn.map(([id,r,bn,en])=>({id,r,bn,en,k,sbn:SH[id][0],sen:SH[id][1]})));
+].map((inn,k)=>inn.map(([id,r,p,bn,en])=>({id,r,p,bn,en,k,sbn:SH[id][0],sen:SH[id][1]})));
+const PER={bn:{"1m":"গত ৩০ দিনে","3m":"গত ৩ মাসে","6m":"গত ৬ মাসে","1y":"গত ১ বছরে","2y":"গত ২ বছরে","now":"এখন","run":"এখনো চলছে"},en:{"1m":"In the last 30 days","3m":"In the last 3 months","6m":"In the last 6 months","1y":"In the last year","2y":"In the last 2 years","now":"Right now","run":"Still running today"}};
 const BYID = Object.fromEntries(ITEMS.flat().map(i=>[i.id,i]));
 
 const DIST = [["Bagerhat","বাগেরহাট"],["Bandarban","বান্দরবান"],["Barguna","বরগুনা"],["Barishal","বরিশাল"],["Bhola","ভোলা"],["Bogura","বগুড়া"],["Brahmanbaria","ব্রাহ্মণবাড়িয়া"],["Chandpur","চাঁদপুর"],["Chapainawabganj","চাঁপাইনবাবগঞ্জ"],["Chattogram","চট্টগ্রাম"],["Chuadanga","চুয়াডাঙ্গা"],["Cox's Bazar","কক্সবাজার"],["Cumilla","কুমিল্লা"],["Dhaka","ঢাকা"],["Dinajpur","দিনাজপুর"],["Faridpur","ফরিদপুর"],["Feni","ফেনী"],["Gaibandha","গাইবান্ধা"],["Gazipur","গাজীপুর"],["Gopalganj","গোপালগঞ্জ"],["Habiganj","হবিগঞ্জ"],["Jamalpur","জামালপুর"],["Jashore","যশোর"],["Jhalokati","ঝালকাঠি"],["Jhenaidah","ঝিনাইদহ"],["Joypurhat","জয়পুরহাট"],["Khagrachhari","খাগড়াছড়ি"],["Khulna","খুলনা"],["Kishoreganj","কিশোরগঞ্জ"],["Kurigram","কুড়িগ্রাম"],["Kushtia","কুষ্টিয়া"],["Lakshmipur","লক্ষ্মীপুর"],["Lalmonirhat","লালমনিরহাট"],["Madaripur","মাদারীপুর"],["Magura","মাগুরা"],["Manikganj","মানিকগঞ্জ"],["Meherpur","মেহেরপুর"],["Moulvibazar","মৌলভীবাজার"],["Munshiganj","মুন্সিগঞ্জ"],["Mymensingh","ময়মনসিংহ"],["Naogaon","নওগাঁ"],["Narail","নড়াইল"],["Narayanganj","নারায়ণগঞ্জ"],["Narsingdi","নরসিংদী"],["Natore","নাটোর"],["Netrokona","নেত্রকোণা"],["Nilphamari","নীলফামারী"],["Noakhali","নোয়াখালী"],["Pabna","পাবনা"],["Panchagarh","পঞ্চগড়"],["Patuakhali","পটুয়াখালী"],["Pirojpur","পিরোজপুর"],["Rajbari","রাজবাড়ী"],["Rajshahi","রাজশাহী"],["Rangamati","রাঙ্গামাটি"],["Rangpur","রংপুর"],["Satkhira","সাতক্ষীরা"],["Shariatpur","শরীয়তপুর"],["Sherpur","শেরপুর"],["Sirajganj","সিরাজগঞ্জ"],["Sunamganj","সুনামগঞ্জ"],["Sylhet","সিলেট"],["Tangail","টাঙ্গাইল"],["Thakurgaon","ঠাকুরগাঁও"]];
@@ -251,7 +254,7 @@ const TX = {
  bn:{langBtn:"English",cardSub:"নিজেকে গড়া ও সমাজ গড়ার স্কোরকার্ড",h1:"তোমার জীবনের স্কোর কত?",lead:"৩০টি ভালো কাজ আর ভালো অভ্যাস, দুই ইনিংসে। যা যা করেছ টিক দাও: তোমার কার্ডে সবাই দেখবে তুমি কী কী করেছ, আর কোনগুলো তোমার পরের লক্ষ্য।",sample:"উদাহরণ: রাকিবের কার্ড। রঙিন ঘর = যা সে করেছে",legend:"রঙিন ঘর = যা করেছি  ·  ফাঁকা ঘর = পরের লক্ষ্য",best:"আমার সেরা শট",more:n=>`আরও ${n}টি`,none:"শুরু হলো এই তো",did:"যা করেছি",
   how1:"রান: যা অনেকেই করেছে",how2:"চার: যা কেউ কেউ করেছে",how3:"ছক্কা: যা খুব কম মানুষ করেছে",start:"ব্যাটিং শুরু করো",priv:"কোনো সাইন-আপ নেই। তোমার উত্তর শুধু তোমার ফোনেই থাকে।",
   friend:(n,s)=>`${n} ${s}* রান করেছে। তুমি পারবে?`,setupH:"মাঠে নামার আগে",name:"তোমার নাম (ঐচ্ছিক)",age:"বয়স",district:"জেলা",choose:"জেলা বেছে নাও (ঐচ্ছিক)",photo:"ছবি (ঐচ্ছিক)",addPhoto:"ছবি যোগ করো",remove:"সরাও",go:"মাঠে নামো",
-  inn:["১ম ইনিংস","২য় ইনিংস"],p1:"নিজেকে গড়া",p2:"সমাজ গড়া",total:"মোট",tapHint:"যা যা করেছ, সেগুলোতে ট্যাপ করো",endInn:"ইনিংস শেষ",brk:"ইনিংস বিরতি",brk1:"১ম ইনিংস · নিজেকে গড়া",
+  inn:["১ম ইনিংস","২য় ইনিংস"],p1:"নিজেকে গড়া",p2:"সমাজ গড়া",total:"মোট",tapHint:"প্রতিটি কাজের উপরে সময়সীমা দেওয়া আছে। ওই সময়ের মধ্যে যা যা করেছ, সেগুলোতে ট্যাপ করো।",endInn:"ইনিংস শেষ",brk:"ইনিংস বিরতি",brk1:"১ম ইনিংস · নিজেকে গড়া",
   brkMsg:"দারুণ শুরু! এবার দেখা যাক সমাজের জন্য তোমার ইনিংস কেমন।",start2:"২য় ইনিংস শুরু করো",resH:"তোমার স্কোরকার্ড",saveHint:"ডাউনলোড না হলে ছবিটি চেপে ধরে সেভ করো।",save:"ছবি সেভ করো",share:"শেয়ার করো",
   copyCap:"ক্যাপশন কপি",copyLink:"চ্যালেঞ্জ লিংক কপি",format:"সাইজ",story:"স্টোরি",square:"স্কয়ার",theme:"থিম",showName:"নাম",showPhoto:"ছবি",showDist:"জেলা",next:"পরের ওভার: ৩টি টার্গেট বেছে নাও",again:"উত্তর বদলাও",
   nextH:"পরের ওভারের টার্গেট",nextMsg:"যা এখনো করোনি, তার মধ্য থেকে ৩টি বেছে নাও। ৩০ দিনে করে ফেলো, তারপর ফিরে এসে নতুন স্কোর শেয়ার করো।",back:"স্কোরকার্ডে ফিরে যাও",
@@ -263,7 +266,7 @@ const TX = {
  en:{langBtn:"বাংলা",cardSub:"Growth & good-deeds scorecard",h1:"What's your life score?",lead:"30 good deeds and good habits, in two innings. Tick what you've done: your card shows everyone exactly what you did, and what's next for you.",sample:"Sample: Rakib's card. Coloured boxes = what he has done",legend:"Coloured = done  ·  Empty = next target",best:"My best shots",more:n=>`+${n} more`,none:"Innings just started",did:"What I've done",
   how1:"runs: things many people have done",how2:"a four: things some people have done",how3:"a six: things few people have done",start:"Start batting",priv:"No sign-up. Your answers stay on your phone.",
   friend:(n,s)=>`${n} scored ${s}*. Can you beat it?`,setupH:"Before you walk out",name:"Your name (optional)",age:"Age",district:"District",choose:"Choose district (optional)",photo:"Photo (optional)",addPhoto:"Add photo",remove:"Remove",go:"Walk out to bat",
-  inn:["1st innings","2nd innings"],p1:"Building myself",p2:"Building my community",total:"Total",tapHint:"Tap everything you've done",endInn:"End innings",brk:"Innings break",brk1:"1st innings · Building myself",
+  inn:["1st innings","2nd innings"],p1:"Building myself",p2:"Building my community",total:"Total",tapHint:"Each item has a time window on top. Tap everything you've done within that window.",endInn:"End innings",brk:"Innings break",brk1:"1st innings · Building myself",
   brkMsg:"Great start! Now let's see your innings for your community.",start2:"Start 2nd innings",resH:"Your scorecard",saveHint:"If it doesn't download, press and hold the image to save it.",save:"Save image",share:"Share",
   copyCap:"Copy caption",copyLink:"Copy challenge link",format:"Size",story:"Story",square:"Square",theme:"Theme",showName:"Name",showPhoto:"Photo",showDist:"District",next:"Next over: pick 3 targets",again:"Change answers",
   nextH:"Your next-over targets",nextMsg:"Pick 3 things you haven't done yet. Do them in 30 days, then come back and share your new score.",back:"Back to scorecard",
@@ -331,7 +334,7 @@ $("#goBtn").addEventListener("click",()=>{S.inn=0;save();renderInn();show("inn")
 // ---------- innings ----------
 function renderInn(){
  const k=S.inn;
- $("#list").innerHTML=ITEMS[k].map(it=>`<button class="it${S.done.includes(it.id)?" on":""}" data-id="${it.id}" aria-pressed="${S.done.includes(it.id)}"><span class="rn num r${it.r}">${D(it.r)}</span><span class="tx">${it[S.lang]}</span><span class="ck"></span></button>`).join("");
+ $("#list").innerHTML=ITEMS[k].map(it=>`<button class="it${S.done.includes(it.id)?" on":""}" data-id="${it.id}" aria-pressed="${S.done.includes(it.id)}"><span class="rn num r${it.r}">${D(it.r)}</span><span class="tx"><span class="per">${PER[S.lang][it.p]}</span>${it[S.lang]}</span><span class="ck"></span></button>`).join("");
  $("#sbName").textContent=t("inn")[k];$("#sbPillar").textContent=k?t("p2"):t("p1");
  $("#endInn").textContent=t("endInn");updBoard();
 }
